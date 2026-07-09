@@ -11,7 +11,21 @@
 /IDEAL-CUSTOMER-PROFILE*.md
 /COMPETITIVE-INTEL*.md
 /SALES-REPORT*.md
+
+# Generated reports rendered to PDF (client deliverables, not repo content)
+/PROSPECT-ANALYSIS*.pdf
+/COMPANY-RESEARCH*.pdf
+/LEAD-QUALIFICATION*.pdf
+/DECISION-MAKERS*.pdf
+/OUTREACH-SEQUENCE*.pdf
+/FOLLOWUP-SEQUENCE*.pdf
+/MEETING-PREP*.pdf
+/CLIENT-PROPOSAL*.pdf
+/OBJECTION-PLAYBOOK*.pdf
+/IDEAL-CUSTOMER-PROFILE*.pdf
+/COMPETITIVE-INTEL*.pdf
 /SALES-REPORT*.pdf
+/SALES-PACKAGE*.pdf
 
 # Python
 __pycache__/
