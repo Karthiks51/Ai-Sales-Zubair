@@ -1,0 +1,326 @@
+<title>S51 Outbound Approach</title>
+<style>
+  :root{
+    --ground:#f6f7fa; --surface:#ffffff; --surface-2:#eef1f7; --surface-3:#e6eaf3;
+    --ink:#14243f; --ink-soft:#41506e; --muted:#78859f; --line:#dbe1ee; --line-strong:#c3cbdd;
+    --who:#2f6fe0; --who-soft:#e7effc; --what:#c15f22; --what-soft:#fbeee3;
+    --good:#1a7f4b; --good-soft:#e2f2e9; --bad:#c0392b; --bad-soft:#fbe9e7;
+    --band:#14243f; --band-ink:#e9eefa;
+    --shadow:0 1px 2px rgba(20,36,63,.06),0 6px 24px rgba(20,36,63,.06);
+    --radius:14px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#0c1524; --surface:#121e33; --surface-2:#18263e; --surface-3:#1f2f4b;
+      --ink:#e9eef8; --ink-soft:#aebbd2; --muted:#7688a3; --line:#263650; --line-strong:#334562;
+      --who:#5f95f6; --who-soft:#16294a; --what:#e08a4c; --what-soft:#33230f;
+      --good:#4cc38a; --good-soft:#12291d; --bad:#e5736a; --bad-soft:#33150f;
+      --band:#0f1a2e; --band-ink:#dfe7f6;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#f6f7fa; --surface:#ffffff; --surface-2:#eef1f7; --surface-3:#e6eaf3;
+    --ink:#14243f; --ink-soft:#41506e; --muted:#78859f; --line:#dbe1ee; --line-strong:#c3cbdd;
+    --who:#2f6fe0; --who-soft:#e7effc; --what:#c15f22; --what-soft:#fbeee3;
+    --good:#1a7f4b; --good-soft:#e2f2e9; --bad:#c0392b; --bad-soft:#fbe9e7;
+    --band:#14243f; --band-ink:#e9eefa;
+    --shadow:0 1px 2px rgba(20,36,63,.06),0 6px 24px rgba(20,36,63,.06);
+  }
+  :root[data-theme="dark"]{
+    --ground:#0c1524; --surface:#121e33; --surface-2:#18263e; --surface-3:#1f2f4b;
+    --ink:#e9eef8; --ink-soft:#aebbd2; --muted:#7688a3; --line:#263650; --line-strong:#334562;
+    --who:#5f95f6; --who-soft:#16294a; --what:#e08a4c; --what-soft:#33230f;
+    --good:#4cc38a; --good-soft:#12291d; --bad:#e5736a; --bad-soft:#33150f;
+    --band:#0f1a2e; --band-ink:#dfe7f6;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.5;
+    -webkit-font-smoothing:antialiased;font-feature-settings:"kern" 1;}
+  .wrap{max-width:1120px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(16px,4vw,40px) 72px;}
+  .eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--who);
+    display:inline-flex;align-items:center;gap:9px;}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--who);display:inline-block;}
+  h1{font-size:clamp(28px,4.6vw,44px);line-height:1.04;letter-spacing:-.022em;font-weight:800;margin:16px 0 0;
+    text-wrap:balance;max-width:16ch;}
+  .lede{font-size:clamp(15px,1.7vw,18px);color:var(--ink-soft);margin:14px 0 0;max-width:60ch;line-height:1.5;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:22px;font-size:12.5px;color:var(--muted);}
+  .meta b{color:var(--ink-soft);font-weight:600;}
+  section{margin-top:clamp(40px,6vw,68px);}
+  .sec-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:22px;}
+  .sec-num{font-size:12px;font-weight:700;color:var(--what);letter-spacing:.1em;font-variant-numeric:tabular-nums;}
+  h2{font-size:clamp(20px,2.6vw,27px);letter-spacing:-.018em;font-weight:750;margin:0;text-wrap:balance;}
+  .sec-sub{color:var(--ink-soft);font-size:14.5px;margin:7px 0 0;max-width:72ch;}
+
+  /* pipeline */
+  .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .phase{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 18px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .phase::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--who);}
+  .phase.engage::before{background:var(--what);}
+  .phase.convert::before{background:var(--good);}
+  .phase-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .phase.build .phase-label{color:var(--who);} .phase.engage .phase-label{color:var(--what);} .phase.convert .phase-label{color:var(--good);}
+  .steps{display:flex;flex-direction:column;gap:8px;}
+  .step{display:flex;gap:11px;align-items:flex-start;}
+  .step .n{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);
+    font-size:11.5px;font-weight:700;color:var(--ink-soft);display:grid;place-items:center;font-variant-numeric:tabular-nums;margin-top:1px;}
+  .step .t{font-size:13.5px;font-weight:650;line-height:1.28;}
+  .step .d{font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:1px;}
+  .flag{margin-top:16px;background:var(--what-soft);border:1px solid color-mix(in srgb,var(--what) 30%,transparent);
+    border-radius:12px;padding:13px 15px;font-size:13px;color:var(--ink);display:flex;gap:11px;}
+  .flag b{color:var(--what);}
+  .flag .ico{flex:0 0 auto;font-weight:800;color:var(--what);}
+
+  /* gate / two lenses */
+  .gate{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start;}
+  @media(max-width:820px){.gate{grid-template-columns:1fr;}}
+  .lenses{display:flex;flex-direction:column;gap:14px;}
+  .lens{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 16px;box-shadow:var(--shadow);
+    border-top:3px solid var(--who);}
+  .lens.what{border-top-color:var(--what);}
+  .lens .tag{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--who);}
+  .lens.what .tag{color:var(--what);}
+  .lens h3{margin:6px 0 2px;font-size:17px;letter-spacing:-.01em;font-weight:750;}
+  .lens .q{font-size:13px;color:var(--ink-soft);font-style:italic;margin:0 0 10px;}
+  .lens ul{margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .lens li{font-size:12.8px;color:var(--ink-soft);padding-left:16px;position:relative;line-height:1.4;}
+  .lens li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border-radius:2px;background:var(--who);}
+  .lens.what li::before{background:var(--what);}
+
+  /* decision diagram */
+  .flow{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;align-items:center;gap:0;}
+  .node{width:100%;max-width:320px;text-align:center;border-radius:11px;padding:11px 14px;font-size:13.5px;font-weight:650;border:1px solid var(--line-strong);background:var(--surface-2);}
+  .node.start{background:var(--band);color:var(--band-ink);border-color:var(--band);}
+  .diamond{max-width:320px;width:100%;padding:13px 14px;border-radius:11px;font-weight:700;font-size:13.5px;text-align:center;border:1.5px dashed;}
+  .diamond.who{border-color:var(--who);background:var(--who-soft);color:var(--ink);}
+  .diamond.what{border-color:var(--what);background:var(--what-soft);color:var(--ink);}
+  .conn{width:2px;height:16px;background:var(--line-strong);}
+  .conn.tall{height:20px;}
+  .branch{display:flex;gap:8px;align-items:center;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;}
+  .outcome{width:100%;max-width:340px;text-align:center;border-radius:11px;padding:11px 14px;font-size:13px;font-weight:700;}
+  .outcome.pass{background:var(--good-soft);color:var(--good);border:1px solid color-mix(in srgb,var(--good) 34%,transparent);}
+  .outcome.hold{background:var(--surface-3);color:var(--ink-soft);border:1px solid var(--line-strong);}
+  .outcome.stop{background:var(--bad-soft);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 30%,transparent);}
+  .flow-row{display:flex;gap:12px;width:100%;justify-content:center;flex-wrap:wrap;}
+
+  /* services fit */
+  .fitgrid{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start;}
+  @media(max-width:860px){.fitgrid{grid-template-columns:1fr;}}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+  .panel h3{margin:0 0 4px;font-size:15px;font-weight:750;letter-spacing:-.01em;}
+  .panel .sub{font-size:12px;color:var(--muted);margin:0 0 16px;}
+  .bar{margin-bottom:14px;}
+  .bar .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;}
+  .bar .top .lab{font-weight:650;} .bar .top .val{color:var(--muted);font-variant-numeric:tabular-nums;}
+  .track{height:9px;border-radius:6px;background:var(--surface-3);overflow:hidden;}
+  .fill{height:100%;border-radius:6px;}
+  .kpis{display:flex;gap:10px;margin-top:6px;}
+  .kpi{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;text-align:center;}
+  .kpi .big{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+  .kpi .cap{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:12.3px;background:var(--surface);}
+  thead th{background:var(--band);color:var(--band-ink);text-align:left;padding:10px 12px;font-weight:650;font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;white-space:nowrap;}
+  tbody td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-soft);}
+  tbody tr:nth-child(even) td{background:var(--surface-2);}
+  td .nm{color:var(--ink);font-weight:700;}
+  td .co{color:var(--muted);font-size:11px;}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em;white-space:nowrap;}
+  .p-strong{background:var(--good-soft);color:var(--good);} .p-mod{background:var(--what-soft);color:var(--what);}
+  .p-a{background:var(--who);color:#fff;} .p-b{background:var(--who-soft);color:var(--who);border:1px solid color-mix(in srgb,var(--who) 26%,transparent);}
+  .p-use{background:var(--good-soft);color:var(--good);} .p-find{background:var(--bad-soft);color:var(--bad);}
+  .p1{color:var(--who);font-weight:700;} .p2{color:var(--what);font-weight:700;}
+
+  /* funnel */
+  .funnel{display:flex;flex-direction:column;gap:9px;}
+  .frow{display:grid;grid-template-columns:1fr 92px;gap:14px;align-items:center;}
+  .fbar-wrap{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative;height:44px;display:flex;align-items:center;}
+  .fbar{height:100%;border-radius:0;background:linear-gradient(90deg,color-mix(in srgb,var(--who) 82%,#fff 0%),var(--who));display:flex;align-items:center;padding-left:14px;min-width:120px;}
+  .fbar.warn{background:linear-gradient(90deg,var(--what),color-mix(in srgb,var(--what) 70%,#000 6%));}
+  .fbar.final{background:linear-gradient(90deg,var(--good),color-mix(in srgb,var(--good) 72%,#000 4%));}
+  .fbar .flab{font-size:12.5px;font-weight:650;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.18);}
+  .frate{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;}
+  .fresult{text-align:right;font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .callout{margin-top:20px;background:var(--band);color:var(--band-ink);border-radius:var(--radius);padding:20px 22px;}
+  .callout .k{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--what) 72%,#fff 28%);}
+  .callout p{margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--band-ink);}
+  .callout p b{color:#fff;}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  @media (prefers-reduced-motion:no-preference){
+    .fill,.fbar{transition:width .6s cubic-bezier(.2,.7,.2,1);}
+  }
+  @media(max-width:560px){.phases{grid-template-columns:1fr;} }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Outbound Campaign &middot; Approach Brief</span>
+    <h1>From a cold list to onboarded clients</h1>
+    <p class="lede">How we qualify, sequence, and convert the July prospect list &mdash; and the answer to the real question: not just are these the right companies, but do they need what S51 sells.</p>
+    <div class="meta">
+      <span><b>Prepared</b> 16 July 2026</span>
+      <span><b>Owner</b> Outbound / S51</span>
+      <span><b>Scope</b> 88 prospects &rarr; 14 priority leads</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span>
+      <div><h2>The whole activity, in twelve stages</h2>
+      <p class="sec-sub">Three phases. We build a clean, current target set, engage each lead on a personalized track, then convert and feed what we learn into the next round.</p></div>
+    </div>
+    <div class="phases">
+      <div class="phase build">
+        <div class="phase-label">Phase 1 &middot; Build the target set</div>
+        <div class="steps">
+          <div class="step"><span class="n">1</span><div><div class="t">Source</div><div class="d">The July list, 100 rows.</div></div></div>
+          <div class="step"><span class="n">2</span><div><div class="t">Clean &amp; de-dupe</div><div class="d">88 unique people; drop duplicates, flag corrupt rows.</div></div></div>
+          <div class="step"><span class="n">3</span><div><div class="t">Re-identify</div><div class="d">Find each person's current role and company.</div></div></div>
+          <div class="step"><span class="n">4</span><div><div class="t">Qualify &mdash; two lenses</div><div class="d">ICP fit <em>and</em> services fit (see 02).</div></div></div>
+        </div>
+      </div>
+      <div class="phase engage">
+        <div class="phase-label">Phase 2 &middot; Engage</div>
+        <div class="steps">
+          <div class="step"><span class="n">5</span><div><div class="t">Tier</div><div class="d">A / B / C / excluded by fit and signal.</div></div></div>
+          <div class="step"><span class="n">6</span><div><div class="t">Contactability</div><div class="d">Recover a live email or go LinkedIn-first.</div></div></div>
+          <div class="step"><span class="n">7</span><div><div class="t">Personalize</div><div class="d">One pain, one trigger, one mapped offer per lead.</div></div></div>
+          <div class="step"><span class="n">8</span><div><div class="t">Sequence</div><div class="d">LinkedIn warm-up, then 5 emails over 18 days.</div></div></div>
+          <div class="step"><span class="n">9</span><div><div class="t">QC gates</div><div class="d">Fact-check and voice audit before anything sends.</div></div></div>
+        </div>
+      </div>
+      <div class="phase convert">
+        <div class="phase-label">Phase 3 &middot; Convert &amp; learn</div>
+        <div class="steps">
+          <div class="step"><span class="n">10</span><div><div class="t">Send &amp; track</div><div class="d">Stagger sends; watch reply signal in the CRM.</div></div></div>
+          <div class="step"><span class="n">11</span><div><div class="t">Convert</div><div class="d">Reply &rarr; discovery call &rarr; proposal &rarr; sign.</div></div></div>
+          <div class="step"><span class="n">12</span><div><div class="t">Learn &amp; scale</div><div class="d">Lock the winning message, then source fresh.</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flag"><span class="ico">!</span><div><b>Why re-identification comes before qualifying:</b> this list is a 2017&ndash;2018 export. 80% of the people have changed jobs and 77% of the emails are dead. We do not sell to the company printed on the row; we find where the person works now and qualify <em>that</em> company.</div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span>
+      <div><h2>Two lenses, not one: ICP fit <span style="color:var(--muted);font-weight:600">and</span> services fit</h2>
+      <p class="sec-sub">The question raised was fair. ICP fit answers <em>who</em> they are. It does not answer whether they need what we sell. A lead must clear both gates to enter the sequence.</p></div>
+    </div>
+    <div class="gate">
+      <div class="flow" aria-label="Qualification decision flow">
+        <div class="node start">Re-identified lead</div>
+        <div class="conn"></div>
+        <div class="diamond who">Lens 1 &mdash; ICP fit<br><span style="font-weight:600;font-size:12px;color:var(--ink-soft)">Right company &amp; buyer?</span></div>
+        <div class="conn"></div>
+        <div class="diamond what">Lens 2 &mdash; Services fit<br><span style="font-weight:600;font-size:12px;color:var(--ink-soft)">Problem we sell into, live, with budget?</span></div>
+        <div class="conn tall"></div>
+        <div class="flow-row">
+          <div class="outcome pass">Both pass &rarr; Priority (Tier A / B)</div>
+        </div>
+        <div class="conn"></div>
+        <div class="flow-row">
+          <div class="outcome hold">ICP only &rarr; Watchlist / nurture</div>
+          <div class="outcome stop">Neither &rarr; Exclude</div>
+        </div>
+      </div>
+      <div class="lenses">
+        <div class="lens who">
+          <span class="tag">Lens 1 &middot; WHO</span>
+          <h3>ICP fit</h3>
+          <p class="q">Are they the right kind of company and buyer?</p>
+          <ul>
+            <li>B2B SaaS $5&ndash;30M ARR, or Data &amp; AI services $10&ndash;500M</li>
+            <li>US / UK / Western Europe served market</li>
+            <li>Marketing leader or founder with budget authority</li>
+            <li>Not Series C+, not B2C, not a nonprofit, not domestic-only</li>
+          </ul>
+        </div>
+        <div class="lens what">
+          <span class="tag">Lens 2 &middot; WHAT</span>
+          <h3>Services fit</h3>
+          <p class="q">Do they have a problem S51 sells into, right now, with budget?</p>
+          <ul>
+            <li>A live pain we solve: positioning, narrative, brand, content, website</li>
+            <li>A trigger showing the need is active now (rebrand, raise, new CMO, launch)</li>
+            <li>Budget for the mapped offer, $6K/mo to $80K project</li>
+            <li>Maps to a named S51 pillar and offer, not a vague "could use marketing"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span>
+      <div><h2>Services fit, lead by lead</h2>
+      <p class="sec-sub">All 14 priority leads clear both lenses. Each maps to a specific service and a sourced "why now." The demand skews to Strategy (Pillar 1) &mdash; our higher-value engagement, not the $6K content subscription.</p></div>
+    </div>
+    <div class="fitgrid">
+      <div class="panel">
+        <h3>What they're buying</h3>
+        <p class="sub">Service demand across the 14</p>
+        <div class="bar"><div class="top"><span class="lab">Pillar 1 &middot; Strategy</span><span class="val">11 leads</span></div><div class="track"><div class="fill" style="width:78.5%;background:var(--who)"></div></div></div>
+        <div class="bar"><div class="top"><span class="lab">Pillar 2 &middot; Content</span><span class="val">3 leads</span></div><div class="track"><div class="fill" style="width:21.5%;background:var(--what)"></div></div></div>
+        <div class="kpis">
+          <div class="kpi"><div class="big">8</div><div class="cap">$40&ndash;80K project</div></div>
+          <div class="kpi"><div class="big">3</div><div class="cap">$15&ndash;30K/mo</div></div>
+          <div class="kpi"><div class="big">3</div><div class="cap">$6K/mo</div></div>
+        </div>
+        <p class="sub" style="margin-top:14px;margin-bottom:0">Positioning &amp; narrative is the recurring need &mdash; triggered by rebrands, raises, new marketing leaders, and category noise.</p>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Tier</th><th>Lead</th><th>ICP</th><th>Pillar</th><th>Service &amp; offer</th><th>Why now (trigger)</th><th>Svc fit</th><th>Email</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill p-a">A</span></td><td><span class="nm">Elay Cohen</span><br><span class="co">SalesHood</span></td><td><span class="pill p-strong">Strong</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Brand-Led Growth &middot; $40&ndash;80K</span></td><td>Agentic Search launch; whole category now says "agentic AI"</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-use">USE</span></td></tr>
+            <tr><td><span class="pill p-a">A</span></td><td><span class="nm">Andrea Calcagno</span><br><span class="co">Cloud4Wi</span></td><td><span class="pill p-strong">Strong</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Brand-Led Growth &middot; $50&ndash;80K</span></td><td>AI-first rebrand to cloud4wi.ai; 2026 platform award</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-use">USE</span></td></tr>
+            <tr><td><span class="pill p-a">A</span></td><td><span class="nm">Utpal Bhatt</span><br><span class="co">Luminary Cloud</span></td><td><span class="pill p-strong">Strong</span></td><td><span class="p1">P1</span></td><td>Category positioning<br><span class="co">Data &amp; AI &middot; $15&ndash;30K/mo</span></td><td>Brand-new CMO; $72M Series B GTM build; "physics AI" unnamed</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-a">A</span></td><td><span class="nm">Oscar Jofre</span><br><span class="co">Kore</span></td><td><span class="pill p-strong">Strong</span></td><td><span class="p1">P1</span></td><td>Positioning + sales toolkit<br><span class="co">Brand-Led Growth &middot; $50&ndash;80K</span></td><td>Rebrand to Kore; $40M Series B; just retained a PR agency</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-use">USE</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Aditya Bhashyam</span><br><span class="co">Motorq</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Category positioning<br><span class="co">Data &amp; AI &middot; $15&ndash;30K/mo</span></td><td>New President "to lead the AI era of vehicle intelligence"</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">David Frieberg</span><br><span class="co">Planalytics</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Narrative Architecture &middot; $40&ndash;60K</span></td><td>NRF &amp; Groceryshop 2025; "weather-driven demand" unnamed</td><td><span class="pill p-mod">Moderate</span></td><td><span class="pill p-use">USE</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Dave Deasy</span><br><span class="co">Wordly</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p2">P2</span></td><td>Embedded content<br><span class="co">Embedded Partner &middot; $6K/mo</span></td><td>Feb 2026 rebrand; Workspaces launch; team doubling</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Jim Yang</span><br><span class="co">Super Dispatch</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p2">P2</span></td><td>Extended creative team<br><span class="co">$6&ndash;80K</span></td><td>"2026: Our Biggest Year Yet"; he is a brand-new CMO</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Joe Montgomery</span><br><span class="co">Overfuel</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Brand-Led Growth &middot; $50&ndash;80K</span></td><td>Oct 2025 growth investment; ~400% growth, crowded field</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Brad Keywell</span><br><span class="co">Gigawatt AI</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Category positioning<br><span class="co">Data &amp; AI &middot; $15&ndash;30K/mo</span></td><td>New AI-utilities OS; entering SAP/Oracle territory</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Stuart Wall</span><br><span class="co">Setpoint</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Brand-Led Growth &middot; $50&ndash;80K</span></td><td>S&amp;P ratings approval; private credit is the loudest category</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Victoria Satran</span><br><span class="co">Computer Guidance</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Brand-Led Growth &middot; $50&ndash;80K</span></td><td>8 straight "Hot Product" wins, not told as a story</td><td><span class="pill p-mod">Moderate</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Jessica Reiter</span><br><span class="co">TruTechnologies</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p2">P2</span></td><td>Standing production team<br><span class="co">Embedded Partner &middot; $6K/mo</span></td><td>New CMO at an early-stage company with no execution capacity</td><td><span class="pill p-mod">Moderate</span></td><td><span class="pill p-find">FIND</span></td></tr>
+            <tr><td><span class="pill p-b">B</span></td><td><span class="nm">Richard Harris</span><br><span class="co">Black Crow AI</span></td><td><span class="pill p-mod">Moderate</span></td><td><span class="p1">P1</span></td><td>Positioning &amp; narrative<br><span class="co">Data &amp; AI &middot; $40&ndash;60K</span></td><td>Real ML edge flattened by "we use AI" sameness</td><td><span class="pill p-strong">Strong</span></td><td><span class="pill p-find">FIND</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span>
+      <div><h2>What this list yields &mdash; and what 20 clients needs</h2>
+      <p class="sec-sub">The honest funnel. This stale list is a proof batch. It validates the message; it does not, by itself, get us to 20.</p></div>
+    </div>
+    <div class="funnel">
+      <div class="frow"><div class="fbar-wrap"><div class="fbar" style="width:100%"><span class="flab">Priority leads with a sequence</span></div></div><div class="fresult">14</div></div>
+      <div class="frow"><div class="fbar-wrap"><div class="fbar" style="width:100%"><span class="flab">+ watchlist founders (nurture)</span></div></div><div class="fresult">20</div></div>
+      <div class="frow"><div class="fbar-wrap"><div class="fbar warn" style="width:75%"><span class="flab">Reach a live contact &middot; ~75%</span></div></div><div class="fresult">~15</div></div>
+      <div class="frow"><div class="fbar-wrap"><div class="fbar warn" style="width:52%"><span class="flab">Positive reply &middot; ~30%</span></div></div><div class="fresult">~4&ndash;5</div></div>
+      <div class="frow"><div class="fbar-wrap"><div class="fbar warn" style="width:34%"><span class="flab">Qualified opportunity &middot; ~60%</span></div></div><div class="fresult">~3</div></div>
+      <div class="frow"><div class="fbar-wrap"><div class="fbar final" style="width:22%"><span class="flab">Signed client</span></div></div><div class="fresult">~1&ndash;2</div></div>
+    </div>
+    <div class="callout">
+      <span class="k">The plan</span>
+      <p>One stale list of 88 realistically yields <b>1&ndash;2 clients</b>. Reaching <b>20</b> needs roughly 8&ndash;12 lists of this quality, or one properly-sourced current list of <b>~400&ndash;600 in-ICP contacts</b>. So we run these 14 as a proof batch, lock the pain-theme and opener that pull replies, then scale sourcing against the exact ICP <em>and</em> services-fit profile these winners share.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>S51 Agency &middot; Outbound approach brief</span>
+    <span>Strategic storytelling for B2B &amp; tech</span>
+  </footer>
+</div>
